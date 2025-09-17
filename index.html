@@ -53,6 +53,14 @@
             flex-shrink: 0; flex-basis: 50%; height: 100%; position: relative;
             background-color: var(--globe-bg-color);
             transition: background-color 0.5s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        #scene-container canvas {
+            max-width: 100%;
+            max-height: 100%;
         }
         #focus-map {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -122,19 +130,33 @@
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
+                position: relative; /* Establish stacking context */
             }
             #scene-container {
                 flex-basis: 40vh;
+                flex-direction: column;
+                justify-content: flex-start;
             }
             .content-container {
                 flex-basis: 60vh;
                 justify-content: flex-start;
                 padding: 1.5rem;
                 overflow-y: auto;
+                position: relative; /* Ensure it respects flex order */
+                z-index: 2; /* Explicitly place above scene container in stacking order */
+            }
+            .logo-container {
+                position: relative;
+                top: 0;
+                left: 0;
+                padding: 0.5rem 0; /* Reduced padding */
+                justify-content: center;
+                width: 100%;
             }
             h1 { font-size: 2.5rem; }
-            nav { flex-wrap: wrap; }
-            nav a { margin-right: 1.5rem; }
+            nav { flex-wrap: wrap; justify-content: center;}
+            nav a { margin: 0 0.75rem; font-size: 0.9rem;}
+            #theme-switcher { margin-left: 0.75rem; }
         }
     </style>
     <script>
@@ -195,7 +217,6 @@
         let globeScene, globeCamera, globeRenderer, earthModel, atmosphere;
         const globeContainer = document.getElementById('scene-container');
         let focusMap, globeCanvas;
-
         function initGlobeScene() {
             globeScene = new THREE.Scene();
             globeCamera = new THREE.PerspectiveCamera(50, globeContainer.clientWidth / globeContainer.clientHeight, 0.1, 1000);
@@ -253,14 +274,16 @@
             }
         }
         function onWindowResize() {
-            if (globeContainer.clientWidth > 0) {
+            if (globeContainer.clientWidth > 0 && globeContainer.clientHeight > 0) {
                 globeCamera.aspect = globeContainer.clientWidth / globeContainer.clientHeight;
                 globeCamera.updateProjectionMatrix();
                 globeRenderer.setSize(globeContainer.clientWidth, globeContainer.clientHeight);
             }
-            starCamera.aspect = window.innerWidth / window.innerHeight;
-            starCamera.updateProjectionMatrix();
-            starRenderer.setSize(window.innerWidth, window.innerHeight);
+            if (starCanvas.clientWidth > 0 && starCanvas.clientHeight > 0) {
+                starCamera.aspect = window.innerWidth / window.innerHeight;
+                starCamera.updateProjectionMatrix();
+                starRenderer.setSize(window.innerWidth, window.innerHeight);
+            }
         }
         function animate() {
             requestAnimationFrame(animate);
