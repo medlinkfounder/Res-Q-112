@@ -161,6 +161,13 @@
       trackBtn.textContent = translations[lang].stop_btn;
       coordsDiv.textContent = translations[lang].status_starting;
 
+      // === FIX: Added options for higher accuracy ===
+      const options = {
+        enableHighAccuracy: true, // Request the most accurate location possible
+        timeout: 10000,           // Set a 10-second timeout to prevent errors
+        maximumAge: 0             // Don't use a cached (old) location
+      };
+
       watchId = navigator.geolocation.watchPosition((position) => {
         const { latitude: lat, longitude: lng, accuracy: acc } = position.coords;
 
@@ -178,7 +185,7 @@
         coordsDiv.textContent = `ID: ${touristId} | Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)}`;
       }, (err) => {
         coordsDiv.textContent = "Error: " + err.message;
-      }, { enableHighAccuracy: true });
+      }, options); // Pass the new options here
     }
     trackBtn.addEventListener('click', startTracking);
 
