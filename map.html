@@ -16,15 +16,61 @@
     .glow-button:hover{box-shadow:0 0 10px #00ffff,0 0 25px #00ffff; background: #00cfff; border-color: #00cfff;}
     .back-button{background:rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;}
     .back-button:hover{background:rgba(255,255,255,0.2); box-shadow:0 0 10px #ffffff,0 0 15px #ffffff;}
-    #map { z-index: 5; /* Keep map controls above background canvas */ }
-    /* New styles for the theme toggle */
-    input:checked ~ .dot {
-        transform: translateX(1.5rem); /* Move the dot for the toggle */
+    #map { z-index: 5; }
+    input:checked ~ .dot { transform: translateX(1.5rem); }
+
+    /* ADDED: Styles for the Alert Modal */
+    #alert-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background-color: rgba(0,0,0,0.7);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+    #alert-modal {
+        background: #1a1a2a;
+        padding: 30px;
+        border-radius: 12px;
+        border: 1px solid #ff4747;
+        text-align: center;
+        max-width: 400px;
+        box-shadow: 0 0 20px rgba(255, 71, 71, 0.5);
+    }
+    #alert-modal h2 {
+        color: #ff4747;
+        font-size: 24px;
+        margin-top: 0;
+        margin-bottom: 15px;
+    }
+    #alert-modal p {
+        margin-bottom: 25px;
+        font-size: 16px;
+    }
+    #alert-modal button {
+        background-color: #ff4747;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
     }
   </style>
 </head>
 <body>
 <canvas id="ripple-canvas"></canvas>
+
+<div id="alert-modal-overlay">
+    <div id="alert-modal">
+        <h2>⚠️ Zone Warning</h2>
+        <p>You have left the designated safe zone. Please return to the marked area for your safety.</p>
+        <button id="alert-ack-btn">Acknowledge</button>
+    </div>
+</div>
+
 <div class="content-overlay">
   <header class="p-4 bg-black/30 flex justify-between items-center flex-shrink-0">
     <div class="flex items-center space-x-2">
@@ -65,8 +111,9 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
   <script type="module">
+    // ADDED: `remove` function for the alert system
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAzwiwp0ByoUkofWPJG1Ux8BY8ueCDwVjM",
@@ -83,61 +130,31 @@
     const db = getDatabase(app);
     const touristId = "tourist_" + Math.floor(Math.random() * 100000);
 
-    // == Leaflet map setup ==
     const map = L.map('map').setView([20.5937, 78.9629], 5);
     const darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; CARTO' });
     const lightLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' });
-    darkLayer.addTo(map); // Start with dark theme by default
+    darkLayer.addTo(map);
 
     let marker = null;
     let accuracyCircle = null;
     let watchId = null;
-    const zoneGroup = L.featureGroup().addTo(map); // Layer group for geofence zones
+    const zoneGroup = L.featureGroup().addTo(map);
 
-    // == Translations Object ==
     const translations = {
-      en: {
-        title: "Live Location Sharing",
-        track_btn: "Share My Location",
-        stop_btn: "Stop Sharing",
-        map_theme_label: "Map Theme",
-        status_waiting: "Waiting for location...",
-        status_starting: "Starting tracking...",
-        status_stopped: "Tracking stopped.",
-        back_btn: "Back to Dashboard"
-      },
-      hi: {
-        title: "लाइव लोकेशन शेयरिंग",
-        track_btn: "मेरी लोकेशन साझा करें",
-        stop_btn: "शेयरिंग रोकें",
-        map_theme_label: "मैप की थीम",
-        status_waiting: "लोकेशन की प्रतीक्षा है...",
-        status_starting: "ट्रैकिंग शुरू हो रही है...",
-        status_stopped: "ट्रैकिंग रोक दी गई।",
-        back_btn: "डैशबोर्ड पर वापस जाएं"
-      },
-      as: {
-        title: "লাইভ অৱস্থান শ্বেয়াৰিং",
-        track_btn: "মোৰ অৱস্থান শ্বেয়াৰ কৰক",
-        stop_btn: "শ্বেয়াৰিং বন্ধ কৰক",
-        map_theme_label: "মানচিত্ৰৰ থীম",
-        status_waiting: "অৱস্থানৰ বাবে অপেক্ষা...",
-        status_starting: "ট্ৰেকিং আৰম্ভ হৈছে...",
-        status_stopped: "ট্ৰেকিং বন্ধ হ'ল।",
-        back_btn: "ডেশ্বব’ৰ্ডলৈ ঘূৰি যাওক"
-      }
+      en: { title: "Live Location Sharing", track_btn: "Share My Location", stop_btn: "Stop Sharing", map_theme_label: "Map Theme", status_waiting: "Waiting for location...", status_starting: "Starting tracking...", status_stopped: "Tracking stopped.", back_btn: "Back to Dashboard" },
+      hi: { title: "लाइव लोकेशन शेयरिंग", track_btn: "मेरी लोकेशन साझा करें", stop_btn: "शेयरिंग रोकें", map_theme_label: "मैप की थीम", status_waiting: "लोकेशन की प्रतीक्षा है...", status_starting: "ट्रैकिंग शुरू हो रही है...", status_stopped: "ट्रैकिंग रोक दी गई।", back_btn: "डैशबोर्ड पर वापस जाएं" },
+      as: { title: "লাইভ অৱস্থান শ্বেয়াৰিং", track_btn: "মোৰ অৱস্থান শ্বেয়াৰ কৰক", stop_btn: "শ্বেয়াৰিং বন্ধ কৰক", map_theme_label: "মানচিত্ৰৰ থীম", status_waiting: "অৱস্থানৰ বাবে অপেক্ষা...", status_starting: "ট্ৰেকিং আৰম্ভ হৈছে...", status_stopped: "ট্ৰেকিং বন্ধ হ'ল।", back_btn: "ডেশ্বব’ৰ্ডলৈ ঘূৰি যাওক" }
     };
     
     const trackBtn = document.getElementById("trackBtn");
     const coordsDiv = document.getElementById("coords");
     const themeToggle = document.getElementById('theme-toggle');
 
-    // == Theme Toggle Logic ==
     themeToggle.addEventListener('change', () => {
-        if (themeToggle.checked) { // If toggled ON, switch to Light Theme
+        if (themeToggle.checked) {
             map.removeLayer(darkLayer);
             lightLayer.addTo(map);
-        } else { // If toggled OFF, switch to Dark Theme
+        } else {
             map.removeLayer(lightLayer);
             darkLayer.addTo(map);
         }
@@ -149,7 +166,6 @@
         coordsDiv.textContent = "Geolocation not supported.";
         return;
       }
-
       if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId);
         watchId = null;
@@ -157,22 +173,16 @@
         coordsDiv.textContent = translations[lang].status_stopped;
         return;
       }
-
       trackBtn.textContent = translations[lang].stop_btn;
       coordsDiv.textContent = translations[lang].status_starting;
-
-      // === FIX: Added options for higher accuracy ===
       const options = {
-        enableHighAccuracy: true, // Request the most accurate location possible
-        timeout: 10000,           // Set a 10-second timeout to prevent errors
-        maximumAge: 0             // Don't use a cached (old) location
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
       };
-
       watchId = navigator.geolocation.watchPosition((position) => {
         const { latitude: lat, longitude: lng, accuracy: acc } = position.coords;
-
         set(ref(db, 'tourists/' + touristId), { latitude: lat, longitude: lng, accuracy: acc, timestamp: Date.now() });
-
         if (!marker) {
           marker = L.marker([lat, lng]).addTo(map);
         } else {
@@ -180,38 +190,50 @@
         }
         if (accuracyCircle) accuracyCircle.remove();
         accuracyCircle = L.circle([lat, lng], { radius: acc, color: "#00FFFF", fillColor: "#00FFFF", fillOpacity: 0.15 }).addTo(map);
-
         map.setView([lat, lng], 17);
         coordsDiv.textContent = `ID: ${touristId} | Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)}`;
       }, (err) => {
         coordsDiv.textContent = "Error: " + err.message;
-      }, options); // Pass the new options here
+      }, options);
     }
     trackBtn.addEventListener('click', startTracking);
 
-    // == Fetch and Display Geofence Zones ==
     onValue(ref(db, 'zones'), (snapshot) => {
-        zoneGroup.clearLayers(); // Clear old zones before drawing new ones
+        zoneGroup.clearLayers();
         const zones = snapshot.val() || {};
         for (const zoneId in zones) {
             const z = zones[zoneId];
             let zoneLayer;
             const zoneStyle = { color: "#00ffff", weight: 2, opacity: 0.7, fillOpacity: 0.1 };
-            
             if (z.type === 'circle') {
                 zoneLayer = L.circle([z.center.lat, z.center.lng], { ...zoneStyle, radius: z.radius });
             } else if (z.type === 'polygon') {
                 zoneLayer = L.polygon(z.points.map(p => [p.lat, p.lng]), zoneStyle);
             }
-
             if (zoneLayer) {
                 zoneLayer.bindTooltip(`Zone ID: ${zoneId}`, { permanent: false, direction: 'center' });
                 zoneGroup.addLayer(zoneLayer);
             }
         }
     });
+    
+    // ADDED: Logic for the Alert System
+    const alertOverlay = document.getElementById('alert-modal-overlay');
+    const ackBtn = document.getElementById('alert-ack-btn');
 
-    // == Language Switcher Logic ==
+    onValue(ref(db, 'alerts/' + touristId), (snapshot) => {
+        if (snapshot.exists()) {
+            // If an alert for this tourist exists, show the modal
+            alertOverlay.style.display = 'flex';
+        }
+    });
+
+    ackBtn.addEventListener('click', () => {
+        // Hide the modal and remove the alert from the database
+        alertOverlay.style.display = 'none';
+        remove(ref(db, 'alerts/' + touristId));
+    });
+
     const switcher = document.getElementById("languageSwitcher");
     function updateLanguage(lang) {
         localStorage.setItem("lang", lang);
@@ -221,7 +243,6 @@
                 el.innerText = translations[lang][key];
             }
         });
-        // Update button text if tracking is active/inactive
         if(watchId !== null) {
             trackBtn.textContent = translations[lang].stop_btn;
         } else {
@@ -239,7 +260,6 @@
       if (watchId !== null) navigator.geolocation.clearWatch(watchId);
     });
 
-    // Ripple background effect
     const canvas=document.getElementById("ripple-canvas"),ctx=canvas.getContext("2d");
     canvas.width=innerWidth;canvas.height=innerHeight;
     let ripples=[];
