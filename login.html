@@ -15,7 +15,6 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 
   <style>
-    /* **NEW:** CSS Variables for easy theming */
     :root {
         --bg-color: #000000;
         --globe-bg-color: #000000;
@@ -23,11 +22,9 @@
         --text-color-light: #fff;
         --text-highlight-glow: #00ffff;
         --glow-button-text: #000;
-        --hr-color: rgba(0, 255, 255, 0.2);
         --primary-font: 'Exo 2', sans-serif;
         --secondary-font: 'Space Grotesk', sans-serif;
     }
-
     body.light-theme {
         --bg-color: #eaf2f8;
         --globe-bg-color: #f5f7fa;
@@ -35,33 +32,26 @@
         --text-color-light: #1c2833;
         --text-highlight-glow: #0056b3;
         --glow-button-text: #fff;
-        --hr-color: rgba(0, 86, 179, 0.2);
     }
-
     body {
         font-family: var(--secondary-font);
         margin: 0;
         overflow: hidden;
         background-color: var(--bg-color);
         color: var(--text-color);
-        transition: background-color 0.5s ease;
     }
-    
     .main-container {
         display: flex;
         width: 100vw;
         height: 100vh;
         position: relative;
     }
-
     #scene-container {
         flex: 0 0 50%;
         height: 100%;
         position: relative;
         background-color: var(--globe-bg-color);
-        transition: background-color 0.5s ease;
     }
-
     .content-container {
         flex: 1;
         height: 100%;
@@ -70,9 +60,8 @@
         justify-content: center;
         padding: 2rem 4rem;
         box-sizing: border-box;
-        position: relative; /* For positioning the theme switcher */
+        position: relative;
     }
-    
     .logo-container {
         position: absolute;
         top: 1.5rem;
@@ -89,7 +78,6 @@
         font-size: 2rem;
         color: var(--text-color-light);
     }
-    
     .glow-button {
         background-color: var(--text-highlight-glow);
         color: var(--glow-button-text);
@@ -101,36 +89,41 @@
         box-shadow:0 0 15px var(--text-highlight-glow),0 0 35px var(--text-highlight-glow);
         transform: scale(1.05);
     }
-
-    /* **NEW:** Styles for the theme switcher button */
     #theme-switcher {
-        position: absolute;
-        top: 1.5rem;
-        right: 2rem;
-        background: none;
-        border: 1px solid var(--hr-color);
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 8px;
-        color: var(--text-color-light);
-        z-index: 10;
+        position: absolute; top: 1.5rem; right: 2rem; background: none;
+        border: 1px solid var(--hr-color); border-radius: 50%; width: 40px; height: 40px;
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+        padding: 8px; color: var(--text-color-light); z-index: 10;
     }
     #theme-switcher svg { width: 100%; height: 100%; }
     .sun-icon { display: none; }
     body.light-theme .moon-icon { display: none; }
     body.light-theme .sun-icon { display: block; }
+    
+    /* Responsive styles for mobile */
+    @media (max-width: 768px) {
+        .main-container {
+            flex-direction: column;
+        }
+        #scene-container {
+            flex-basis: 40vh;
+        }
+        .content-container {
+            flex-basis: 60vh;
+            justify-content: flex-start;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+        .content-container main h2 {
+            font-size: 2rem;
+            margin-top: 1rem;
+        }
+    }
   </style>
   <script>
     (function() {
         const currentTheme = localStorage.getItem('theme');
-        if (currentTheme === 'light') {
-            document.body.classList.add('light-theme');
-        }
+        if (currentTheme === 'light') { document.body.classList.add('light-theme'); }
     })();
   </script>
 </head>
@@ -179,26 +172,21 @@
     </div>
 
     <script type="module">
-        // --- SCENE 1: MAIN GLOBE ---
         let globeScene, globeCamera, globeRenderer, earthModel, atmosphere;
         const globeContainer = document.getElementById('scene-container');
-        
         function initGlobeScene() {
             globeScene = new THREE.Scene();
             globeCamera = new THREE.PerspectiveCamera(50, globeContainer.clientWidth / globeContainer.clientHeight, 0.1, 1000);
             globeCamera.position.set(0, 0, 4);
-
             const globeCanvas = document.createElement('canvas');
             globeContainer.appendChild(globeCanvas);
             globeRenderer = new THREE.WebGLRenderer({ canvas: globeCanvas, antialias: true, alpha: true });
             globeRenderer.setSize(globeContainer.clientWidth, globeContainer.clientHeight);
-
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
             globeScene.add(ambientLight);
             const directionalLight = new THREE.DirectionalLight(0xffffff, 3.0);
             directionalLight.position.set(-5, 3, 5);
             globeScene.add(directionalLight);
-
             const atmosphereGeometry = new THREE.SphereGeometry(1, 64, 64);
             const atmosphereMaterial = new THREE.MeshBasicMaterial({ color: 0xadd8e6, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending });
             atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
@@ -211,7 +199,6 @@
                 atmosphere.scale.set(0.0105, 0.0105, 0.0105);
             });
         }
-
         function onWindowResize() {
             if (globeContainer.clientWidth > 0) {
                 globeCamera.aspect = globeContainer.clientWidth / globeContainer.clientHeight;
@@ -219,7 +206,6 @@
                 globeRenderer.setSize(globeContainer.clientWidth, globeContainer.clientHeight);
             }
         }
-        
         function animate() {
             requestAnimationFrame(animate);
             if (earthModel) {
@@ -228,16 +214,12 @@
             }
             globeRenderer.render(globeScene, globeCamera);
         }
-
-        // --- THEME SWITCHER LOGIC ---
         const themeSwitcher = document.getElementById('theme-switcher');
         themeSwitcher.addEventListener('click', () => {
             document.body.classList.toggle('light-theme');
             const currentTheme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
             localStorage.setItem('theme', currentTheme);
         });
-
-        // --- FORM & FIREBASE LOGIC ---
         const firebaseConfig={ apiKey:"AIzaSyBcLtaRPt6hTo4aEFRvcBwNq5-00soEjB4", authDomain:"sos-c1499.firebaseapp.com", databaseURL:"https://sos-c1499-default-rtdb.asia-southeast1.firebasedatabase.app", projectId:"sos-c1499", storageBucket:"sos-c1499.appspot.com", messagingSenderId:"1008729495848", appId:"1:1008729495848:web:7d6c7d3a6047e2736e981d", measurementId:"G-JGBY3ZZPGC" };
         window.firebase.initializeApp(firebaseConfig);
         const db = window.firebase.database();
@@ -256,8 +238,6 @@
             localStorage.setItem("userId", id);
             window.location.href = "dashboard.html"; 
         });
-
-        // --- INITIALIZE EVERYTHING ---
         initGlobeScene();
         window.addEventListener('resize', onWindowResize);
         animate();
