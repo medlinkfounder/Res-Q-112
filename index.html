@@ -25,7 +25,6 @@
             --primary-font: 'Exo 2', sans-serif;
             --secondary-font: 'Space Grotesk', sans-serif;
         }
-
         body.light-theme {
             --bg-color: #eaf2f8;
             --bg-image: radial-gradient(circle at 10% 10%, #ffffff 0%, #eaf2f8 80%);
@@ -36,7 +35,6 @@
             --glow-button-text: #fff;
             --hr-color: rgba(0, 86, 179, 0.2);
         }
-
         body {
             font-family: var(--secondary-font);
             margin: 0;
@@ -45,209 +43,109 @@
             background-image: var(--bg-image);
             transition: background-color 0.5s ease, background-image 0.5s ease;
         }
-
-        #fade-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #000000;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 9999;
-        }
-        
         #star-background-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 1;
-            transition: opacity 0.5s ease;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 1; transition: opacity 0.5s ease;
         }
-
-        body.light-theme #star-background-canvas {
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .main-container {
-            display: flex;
-            width: 100vw;
-            height: 100vh;
-            position: relative;
-            z-index: 2;
-        }
-
+        body.light-theme #star-background-canvas { opacity: 0; pointer-events: none; }
+        .main-container { display: flex; width: 100vw; height: 100vh; position: relative; z-index: 2; }
         #scene-container {
-            flex-shrink: 0;
-            flex-basis: 50%;
-            height: 100%;
-            position: relative;
+            flex-shrink: 0; flex-basis: 50%; height: 100%; position: relative;
             background-color: var(--globe-bg-color);
             transition: background-color 0.5s ease;
         }
-
         #focus-map {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 5; /* Below the logo */
-            /* **UPDATED:** Increased padding to make the map smaller */
-            padding: 3rem;
-            box-sizing: border-box;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: contain; opacity: 0; pointer-events: none; z-index: 5;
+            padding: 3rem; box-sizing: border-box;
         }
-
         .content-container {
-            flex-grow: 1;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 2rem 4rem;
-            box-sizing: border-box;
-            background: transparent;
+            flex-grow: 1; height: 100%; display: flex; flex-direction: column;
+            justify-content: center; padding: 2rem 4rem; box-sizing: border-box; background: transparent;
         }
-        
         .logo-container {
-            position: absolute;
-            top: 1.5rem;
-            left: 2rem;
-            /* **UPDATED:** Increased z-index to be above the map */
-            z-index: 10; 
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            position: absolute; top: 1.5rem; left: 2rem; z-index: 10; 
+            display: flex; align-items: center; gap: 0.75rem;
         }
         .logo-container img { height: 60px; width: 60px; } 
         .logo-container span {
-            font-family: var(--secondary-font);
-            font-weight: 700;
-            font-size: 2rem;
+            font-family: var(--secondary-font); font-weight: 700; font-size: 2rem;
             color: var(--text-color-light);
         }
-
-        nav { 
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-        }
+        nav { margin-bottom: 1rem; display: flex; align-items: center; }
         nav a {
-            font-family: var(--primary-font);
-            font-weight: 600;
-            font-size: 1rem;
-            color: var(--text-color-light);
-            text-decoration: none;
-            margin-right: 2rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid transparent;
-            transition: color 0.3s, border-color 0.3s, text-shadow 0.3s;
-            cursor: pointer;
+            font-family: var(--primary-font); font-weight: 600; font-size: 1rem;
+            color: var(--text-color-light); text-decoration: none; margin-right: 2rem;
+            padding-bottom: 0.5rem; border-bottom: 2px solid transparent;
+            transition: color 0.3s, border-color 0.3s, text-shadow 0.3s; cursor: pointer;
         }
         nav a:hover, nav a.active {
             color: var(--text-highlight-glow);
             border-bottom-color: var(--text-highlight-glow);
             text-shadow: 0 0 5px var(--text-highlight-glow);
         }
-        
         .glow-button {
-            background-color: var(--text-highlight-glow);
-            color: var(--glow-button-text);
-            font-weight: 700;
-            padding: 0.75rem 1.5rem;
-            border-radius: 5px;
-            text-decoration: none;
-            display: inline-block;
-            box-shadow: 0 0 8px var(--text-highlight-glow), 0 0 20px var(--text-highlight-glow);
+            background-color: var(--text-highlight-glow); color: var(--glow-button-text);
+            font-weight: 700; padding: 0.75rem 1.5rem; border-radius: 5px; text-decoration: none;
+            display: inline-block; box-shadow: 0 0 8px var(--text-highlight-glow), 0 0 20px var(--text-highlight-glow);
             transition: all 0.3s ease;
         }
         .glow-button:hover {
             box-shadow: 0 0 15px var(--text-highlight-glow), 0 0 35px var(--text-highlight-glow);
             transform: scale(1.05);
         }
-        
-        .login-button-container {
-            margin-top: 3rem; 
-        }
-
-        .content-section { 
-            display: none; 
-            color: var(--text-color);
-        }
-        .content-section.visible {
-            display: block;
-            animation: fadeIn 0.8s ease-in-out;
-        }
-        
+        .login-button-container { margin-top: 3rem;  }
+        .content-section { display: none; color: var(--text-color); }
+        .content-section.visible { display: block; animation: fadeIn 0.8s ease-in-out; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        h1, h2 {
-            font-family: var(--primary-font);
-            color: var(--text-color-light);
-        }
+        h1, h2 { font-family: var(--primary-font); color: var(--text-color-light); }
         h1 {
-            font-weight: 900;
-            font-size: 3.5rem;
-            line-height: 1.1;
-            margin-bottom: 1rem;
+            font-weight: 900; font-size: 3.5rem; line-height: 1.1; margin-bottom: 1rem;
             text-shadow: 0 0 10px rgba(150,150,150,0.5);
         }
-        h2 {
-            font-weight: 700;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--text-highlight-glow);
-        }
-        h1 .highlight {
-            color: var(--text-highlight-glow);
-            text-shadow: 0 0 10px var(--text-highlight-glow);
-        }
-        
+        h2 { font-weight: 700; font-size: 2.5rem; margin-bottom: 1rem; color: var(--text-highlight-glow); }
+        h1 .highlight { color: var(--text-highlight-glow); text-shadow: 0 0 10px var(--text-highlight-glow); }
         #theme-switcher {
-            background: none;
-            border: 1px solid var(--hr-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: auto;
-            padding: 8px;
-            color: var(--text-color-light);
+            background: none; border: 1px solid var(--hr-color); border-radius: 50%; width: 40px; height: 40px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            margin-left: auto; padding: 8px; color: var(--text-color-light);
         }
-        #theme-switcher svg {
-            width: 100%;
-            height: 100%;
-        }
+        #theme-switcher svg { width: 100%; height: 100%; }
         .sun-icon { display: none; }
         body.light-theme .moon-icon { display: none; }
         body.light-theme .sun-icon { display: block; }
+        
+        /* Responsive styles for mobile */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            #scene-container {
+                flex-basis: 40vh;
+            }
+            .content-container {
+                flex-basis: 60vh;
+                justify-content: flex-start;
+                padding: 1.5rem;
+                overflow-y: auto;
+            }
+            h1 { font-size: 2.5rem; }
+            nav { flex-wrap: wrap; }
+            nav a { margin-right: 1.5rem; }
+        }
     </style>
     <script>
         (function() {
             const currentTheme = localStorage.getItem('theme');
-            if (currentTheme === 'light') {
-                document.body.classList.add('light-theme');
-            }
+            if (currentTheme === 'light') { document.body.classList.add('light-theme'); }
         })();
     </script>
 </head>
 <body>
-    <div id="fade-overlay"></div>
     <canvas id="star-background-canvas"></canvas>
-
     <div class="main-container">
         <div id="scene-container">
              <div class="logo-container">
@@ -287,18 +185,17 @@
                     <p>Our platform is built on three pillars: Artificial Intelligence for threat prediction, Blockchain for secure data, and Geo-Fencing for real-time location-based alerts.</p>
                 </section>
                 <div class="login-button-container">
-                    <a href="login.html" class="glow-button" id="login-redirect-button">Login / Sign Up</a>
+                    <a href="login.html" class="glow-button">Login / Sign Up</a>
                 </div>
             </main>
         </div>
     </div>
 
     <script type="module">
-        // --- SCENE 1: MAIN GLOBE ---
         let globeScene, globeCamera, globeRenderer, earthModel, atmosphere;
         const globeContainer = document.getElementById('scene-container');
         let focusMap, globeCanvas;
-        
+
         function initGlobeScene() {
             globeScene = new THREE.Scene();
             globeCamera = new THREE.PerspectiveCamera(50, globeContainer.clientWidth / globeContainer.clientHeight, 0.1, 1000);
@@ -316,7 +213,6 @@
             const atmosphereMaterial = new THREE.MeshBasicMaterial({ color: 0xadd8e6, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending });
             atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
             globeScene.add(atmosphere);
-            
             const loader = new THREE.GLTFLoader();
             loader.load('earth.glb', (gltf) => {
                 earthModel = gltf.scene;
@@ -325,8 +221,6 @@
                 atmosphere.scale.set(0.0105, 0.0105, 0.0105);
             });
         }
-
-        // --- SCENE 2: BACKGROUND STARS ---
         let starScene, starCamera, starRenderer, stars;
         const starCanvas = document.getElementById('star-background-canvas');
         function initStarScene() {
@@ -344,11 +238,8 @@
             stars = new THREE.Points(starGeo, starMat);
             starScene.add(stars);
         }
-
-        // --- GENERAL SETUP & ANIMATION ---
         const contentSections = document.querySelectorAll('.content-section');
         const navLinks = document.querySelectorAll('.nav-link');
-
         function navigateTo(targetId) {
             contentSections.forEach(s => s.classList.toggle('visible', s.id === targetId));
             navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('data-target') === targetId));
@@ -361,85 +252,36 @@
                 gsap.to(focusMap, { opacity: 0, duration: 0.5 });
             }
         }
-
         function onWindowResize() {
-            globeCamera.aspect = globeContainer.clientWidth / globeContainer.clientHeight;
-            globeCamera.updateProjectionMatrix();
-            globeRenderer.setSize(globeContainer.clientWidth, globeContainer.clientHeight);
+            if (globeContainer.clientWidth > 0) {
+                globeCamera.aspect = globeContainer.clientWidth / globeContainer.clientHeight;
+                globeCamera.updateProjectionMatrix();
+                globeRenderer.setSize(globeContainer.clientWidth, globeContainer.clientHeight);
+            }
             starCamera.aspect = window.innerWidth / window.innerHeight;
             starCamera.updateProjectionMatrix();
             starRenderer.setSize(window.innerWidth, window.innerHeight);
         }
-        
         function animate() {
             requestAnimationFrame(animate);
-            if (earthModel) {
-                earthModel.rotation.y += 0.001;
-            }
-            if (atmosphere && earthModel) {
-                atmosphere.rotation.copy(earthModel.rotation);
-            }
+            if (earthModel) { earthModel.rotation.y += 0.001; }
+            if (atmosphere && earthModel) { atmosphere.rotation.copy(earthModel.rotation); }
             globeRenderer.render(globeScene, globeCamera);
-            if (stars) {
-                stars.rotation.y += 0.0001;
-            }
+            if (stars) { stars.rotation.y += 0.0001; }
             starRenderer.render(starScene, starCamera);
         }
-
-        // --- THEME SWITCHER LOGIC ---
         const themeSwitcher = document.getElementById('theme-switcher');
         themeSwitcher.addEventListener('click', () => {
             document.body.classList.toggle('light-theme');
             const currentTheme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
             localStorage.setItem('theme', currentTheme);
         });
-        
-        // --- EXIT ANIMATION FOR LOGIN BUTTON ---
-        const loginButton = document.getElementById('login-redirect-button');
-        const fadeOverlay = document.getElementById('fade-overlay');
-        loginButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            
-            const timeline = gsap.timeline({
-                onComplete: () => {
-                    window.location.href = loginButton.href;
-                }
-            });
-
-            timeline.to('.content-container, .logo-container', { 
-                opacity: 0, 
-                duration: 0.75,
-                ease: 'power2.in'
-            }, 0);
-            
-            timeline.to('#scene-container', { 
-                flexBasis: '100%',
-                duration: 1.5,
-                ease: 'power3.inOut'
-            }, 0);
-            
-            timeline.to(globeCamera.position, { 
-                z: 1.5,
-                duration: 1.5,
-                ease: 'power3.in'
-            }, 0);
-
-            timeline.to(fadeOverlay, {
-                opacity: 1,
-                duration: 1.5,
-                ease: 'power2.inOut'
-            }, 0);
-        });
-
-        // --- INITIALIZE EVERYTHING ---
         initGlobeScene();
         initStarScene();
         focusMap = document.getElementById('focus-map');
         window.addEventListener('resize', onWindowResize);
         navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                navigateTo(e.currentTarget.getAttribute('data-target'));
-            });
+            link.addEventListener('click', (e) => navigateTo(e.currentTarget.getAttribute('data-target')));
         });
         animate();
     </script>
