@@ -40,84 +40,24 @@
         background-color: var(--bg-color);
         color: var(--text-color);
     }
-    .main-container {
-        display: flex;
-        width: 100vw;
-        height: 100vh;
-        position: relative;
-    }
-    #scene-container {
-        flex: 0 0 50%;
-        height: 100%;
-        position: relative;
-        background-color: var(--globe-bg-color);
-    }
-    .content-container {
-        flex: 1;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        padding: 2rem 4rem;
-        box-sizing: border-box;
-        position: relative;
-    }
-    .logo-container {
-        position: absolute;
-        top: 1.5rem;
-        left: 2rem;
-        z-index: 3;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
+    .main-container { display: flex; width: 100vw; height: 100vh; position: relative; }
+    #scene-container { flex: 0 0 50%; height: 100%; position: relative; background-color: var(--globe-bg-color); }
+    .content-container { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 2rem 4rem; box-sizing: border-box; position: relative; }
+    .logo-container { position: absolute; top: 1.5rem; left: 2rem; z-index: 3; display: flex; align-items: center; gap: 0.75rem; }
     .logo-container img { height: 60px; width: 60px; } 
-    .logo-container span {
-        font-family: var(--secondary-font);
-        font-weight: 700;
-        font-size: 2rem;
-        color: var(--text-color-light);
-    }
-    .glow-button {
-        background-color: var(--text-highlight-glow);
-        color: var(--glow-button-text);
-        font-weight: 700;
-        box-shadow:0 0 8px var(--text-highlight-glow),0 0 20px var(--text-highlight-glow);
-        transition:all .3s ease
-    }
-    .glow-button:hover {
-        box-shadow:0 0 15px var(--text-highlight-glow),0 0 35px var(--text-highlight-glow);
-        transform: scale(1.05);
-    }
-    #theme-switcher {
-        position: absolute; top: 1.5rem; right: 2rem; background: none;
-        border: 1px solid var(--hr-color); border-radius: 50%; width: 40px; height: 40px;
-        cursor: pointer; display: flex; align-items: center; justify-content: center;
-        padding: 8px; color: var(--text-color-light); z-index: 10;
-    }
+    .logo-container span { font-family: var(--secondary-font); font-weight: 700; font-size: 2rem; color: var(--text-color-light); }
+    .glow-button { background-color: var(--text-highlight-glow); color: var(--glow-button-text); font-weight: 700; box-shadow:0 0 8px var(--text-highlight-glow),0 0 20px var(--text-highlight-glow); transition:all .3s ease }
+    .glow-button:hover { box-shadow:0 0 15px var(--text-highlight-glow),0 0 35px var(--text-highlight-glow); transform: scale(1.05); }
+    #theme-switcher { position: absolute; top: 1.5rem; right: 2rem; background: none; border: 1px solid var(--hr-color); border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 8px; color: var(--text-color-light); z-index: 10; }
     #theme-switcher svg { width: 100%; height: 100%; }
     .sun-icon { display: none; }
     body.light-theme .moon-icon { display: none; }
     body.light-theme .sun-icon { display: block; }
-    
-    /* Responsive styles for mobile */
     @media (max-width: 768px) {
-        .main-container {
-            flex-direction: column;
-        }
-        #scene-container {
-            flex-basis: 40vh;
-        }
-        .content-container {
-            flex-basis: 60vh;
-            justify-content: flex-start;
-            padding: 1.5rem;
-            overflow-y: auto;
-        }
-        .content-container main h2 {
-            font-size: 2rem;
-            margin-top: 1rem;
-        }
+        .main-container { flex-direction: column; }
+        #scene-container { flex-basis: 40vh; }
+        .content-container { flex-basis: 60vh; justify-content: flex-start; padding: 1.5rem; overflow-y: auto; }
+        .content-container main h2 { font-size: 2rem; margin-top: 1rem; }
     }
   </style>
   <script>
@@ -154,13 +94,21 @@
                             <option value="aadhaar">Aadhaar Number</option>
                             <option value="passport">Passport Number</option>
                         </select>
-                        <button type="button" onclick="nextStep(2)" class="w-full bg-cyan-500 text-black font-bold py-3 rounded-lg glow-button mt-4">Next</button>
+                        <button type="button" onclick="proceedToNextStep()" class="w-full bg-cyan-500 text-black font-bold py-3 rounded-lg glow-button mt-4">Next</button>
                     </div>
+
+                    <div id="step1_5" class="hidden">
+                        <input id="whatsappNumber" type="tel" placeholder="Enter Your WhatsApp Number"
+                            class="w-full p-3 rounded-lg bg-black/40 text-white text-center mb-4 border border-gray-700 focus:border-cyan-500 focus:ring-0 outline-none"/>
+                        <button type="button" onclick="nextStep('2')" class="w-full bg-cyan-500 text-black font-bold py-3 rounded-lg glow-button mt-4">Next</button>
+                    </div>
+
                     <div id="step2" class="hidden">
-                        <input id="idNumber" type="text" placeholder="Enter Aadhaar / Passport Number"
+                        <input id="idNumber" type="text" placeholder="Enter ID Number"
                             class="w-full p-3 rounded-lg bg-black/40 text-white text-center border border-gray-700 focus:border-cyan-500 focus:ring-0 outline-none"/>
-                        <button type="button" onclick="nextStep(3)" class="w-full bg-cyan-500 text-black font-bold py-3 rounded-lg glow-button mt-4">Send OTP</button>
+                        <button type="button" onclick="nextStep('3')" class="w-full bg-cyan-500 text-black font-bold py-3 rounded-lg glow-button mt-4">Send OTP</button>
                     </div>
+
                     <div id="step3" class="hidden">
                         <input id="otpInput" type="text" placeholder="Enter OTP"
                             class="w-full p-3 rounded-lg bg-black/40 text-white text-center border border-gray-700 focus:border-cyan-500 focus:ring-0 outline-none"/>
@@ -172,6 +120,7 @@
     </div>
 
     <script type="module">
+        // Three.js globe code
         let globeScene, globeCamera, globeRenderer, earthModel, atmosphere;
         const globeContainer = document.getElementById('scene-container');
         function initGlobeScene() {
@@ -199,45 +148,90 @@
                 atmosphere.scale.set(0.0105, 0.0105, 0.0105);
             });
         }
-        function onWindowResize() {
-            if (globeContainer.clientWidth > 0) {
-                globeCamera.aspect = globeContainer.clientWidth / globeContainer.clientHeight;
-                globeCamera.updateProjectionMatrix();
-                globeRenderer.setSize(globeContainer.clientWidth, globeContainer.clientHeight);
-            }
-        }
-        function animate() {
-            requestAnimationFrame(animate);
-            if (earthModel) {
-                earthModel.rotation.y += 0.001;
-                atmosphere.rotation.y += 0.001;
-            }
-            globeRenderer.render(globeScene, globeCamera);
-        }
+        function onWindowResize() { if (globeContainer.clientWidth > 0) { globeCamera.aspect = globeContainer.clientWidth / globeContainer.clientHeight; globeCamera.updateProjectionMatrix(); globeRenderer.setSize(globeContainer.clientWidth, globeContainer.clientHeight); } }
+        function animate() { requestAnimationFrame(animate); if (earthModel) { earthModel.rotation.y += 0.001; atmosphere.rotation.y += 0.001; } globeRenderer.render(globeScene, globeCamera); }
         const themeSwitcher = document.getElementById('theme-switcher');
-        themeSwitcher.addEventListener('click', () => {
-            document.body.classList.toggle('light-theme');
-            const currentTheme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
-            localStorage.setItem('theme', currentTheme);
-        });
+        themeSwitcher.addEventListener('click', () => { document.body.classList.toggle('light-theme'); const currentTheme = document.body.classList.contains('light-theme') ? 'light' : 'dark'; localStorage.setItem('theme', currentTheme); });
+
+        // Firebase and Form Logic
         const firebaseConfig={ apiKey:"AIzaSyBcLtaRPt6hTo4aEFRvcBwNq5-00soEjB4", authDomain:"sos-c1499.firebaseapp.com", databaseURL:"https://sos-c1499-default-rtdb.asia-southeast1.firebasedatabase.app", projectId:"sos-c1499", storageBucket:"sos-c1499.appspot.com", messagingSenderId:"1008729495848", appId:"1:1008729495848:web:7d6c7d3a6047e2736e981d", measurementId:"G-JGBY3ZZPGC" };
         window.firebase.initializeApp(firebaseConfig);
         const db = window.firebase.database();
+
+        // Form navigation logic
         window.nextStep = function(step) {
-            document.querySelectorAll('#login-form > div').forEach(d=>d.classList.add('hidden'));
+            document.querySelectorAll('#login-form > div').forEach(d => d.classList.add('hidden'));
             document.getElementById(`step${step}`).classList.remove('hidden');
         }
-        document.getElementById("login-form").addEventListener("submit", e => {
+
+        window.proceedToNextStep = function() {
+            const method = document.getElementById("method").value;
+            const idNumberInput = document.getElementById("idNumber");
+            const otpInput = document.getElementById("otpInput");
+
+            if (!method) {
+                alert("Please select a verification method.");
+                return;
+            }
+
+            if (method === 'passport') {
+                idNumberInput.placeholder = "Enter Passport Number";
+                otpInput.placeholder = "Enter OTP received on WhatsApp";
+                nextStep('1_5');
+            } else { // 'aadhaar'
+                idNumberInput.placeholder = "Enter Aadhaar Number";
+                otpInput.placeholder = "Enter OTP";
+                nextStep('2');
+            }
+        }
+
+        // Form submission logic to save data to Firebase
+        document.getElementById("login-form").addEventListener("submit", async (e) => {
             e.preventDefault();
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = "Processing...";
+
             const name = document.getElementById("fullName").value;
             const method = document.getElementById("method").value;
             const id = document.getElementById("idNumber").value;
-            if(!name || !method || !id){ alert("Please fill all fields"); return; }
+            const whatsapp = document.getElementById("whatsappNumber").value;
+
+            if (!name || !method || !id) {
+                alert("Please fill all fields");
+                submitButton.disabled = false;
+                submitButton.textContent = "Get Your Unique Blockchain ID";
+                return;
+            }
+            
             const blockchainId = "BCID-" + Math.random().toString(36).substring(2, 10).toUpperCase();
-            db.ref("users/" + id).set({ name, method, id, blockchainId, updatedAt: Date.now() });
-            localStorage.setItem("userId", id);
-            window.location.href = "dashboard.html"; 
+            
+            try {
+                const userData = { 
+                    name, 
+                    method, 
+                    id, 
+                    blockchainId, 
+                    updatedAt: Date.now() 
+                };
+
+                if (method === 'passport' && whatsapp) {
+                    userData.whatsapp = whatsapp;
+                }
+
+                await db.ref("users/" + id).set(userData);
+
+                localStorage.setItem("userId", id);
+                window.location.href = "dashboard.html";
+
+            } catch (error) {
+                console.error("Firebase write failed:", error);
+                alert("Could not save your data. Please try again.");
+                submitButton.disabled = false;
+                submitButton.textContent = "Get Your Unique Blockchain ID";
+            }
         });
+
         initGlobeScene();
         window.addEventListener('resize', onWindowResize);
         animate();
